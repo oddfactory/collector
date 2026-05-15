@@ -6,9 +6,16 @@ import io
 import time
 import sys
 import asyncio
+import os
 
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+
+@st.cache_resource
+def install_playwright():
+    os.system("playwright install chromium")
+
+install_playwright()
 
 st.set_page_config(page_title="인트라넷 데이터 수집기", page_icon="📊", layout="centered")
 
@@ -40,8 +47,8 @@ def scrape_sales_data(user_id, password):
     Playwright를 사용하여 인트라넷에 로그인하고 예상마감 데이터를 크롤링합니다.
     """
     with sync_playwright() as p:
-        # headless=False로 설정하여 실행 과정을 화면에 보여줌
-        browser = p.chromium.launch(headless=False)
+        # headless=True로 설정하여 서버 환경(화면 없는 환경)에서도 동작하게 함
+        browser = p.chromium.launch(headless=True)
         context = browser.new_context(
             viewport={'width': 1280, 'height': 800},
             user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
